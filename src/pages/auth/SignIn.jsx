@@ -5,6 +5,7 @@ import { useAuth } from '../../auth/AuthContext.jsx'
 import { supabase } from '../../lib/supabase.js'
 import { AuthLayout } from '../../components/auth/AuthLayout.jsx'
 import { AuthField } from '../../components/auth/AuthField.jsx'
+import { SEO } from '../../components/SEO.jsx'
 
 export function SignIn() {
 	const { signIn, isAuthenticated } = useAuth()
@@ -57,10 +58,16 @@ export function SignIn() {
 	}
 
 	return (
-		<AuthLayout
-			title="Sign in"
-			subtitle="Welcome back to Karuru"
-			footer={
+		<>
+			<SEO 
+				title="Sign In"
+				description="Sign in to your Karuru Stand Management account to access your dashboard, manage stands, track sales, and view reports."
+				url="https://karuru-stand.vercel.app/signin"
+			/>
+			<AuthLayout
+				title="Sign in"
+				subtitle="Welcome back to Karuru"
+				footer={
 				<p className={`text-center text-sm ${theme.mutedText}`}>
 					Don't have an account?{' '}
 					<Link to="/signup" className="text-teal-700 hover:underline">
@@ -161,5 +168,6 @@ export function SignIn() {
 				</button>
 			</form>
 		</AuthLayout>
+		</>
 	)
 }

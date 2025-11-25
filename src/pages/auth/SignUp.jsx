@@ -4,6 +4,7 @@ import { theme } from '../../theme/colors.teal.js'
 import { useAuth } from '../../auth/AuthContext.jsx'
 import { AuthLayout } from '../../components/auth/AuthLayout.jsx'
 import { AuthField } from '../../components/auth/AuthField.jsx'
+import { SEO } from '../../components/SEO.jsx'
 
 export function SignUp() {
 	const { signUp, resendConfirmation } = useAuth()
@@ -115,10 +116,16 @@ export function SignUp() {
 	}
 
 	return (
-		<AuthLayout
-			title="Create account"
-			subtitle="Start managing stands with Karuru"
-			footer={
+		<>
+			<SEO 
+				title="Sign Up"
+				description="Create your Karuru Stand Management account to start tracking stands, sales, customers, and payments."
+				url="https://karuru-stand.vercel.app/signup"
+			/>
+			<AuthLayout
+				title="Create account"
+				subtitle="Start managing stands with Karuru"
+				footer={
 				<p className={`text-center text-sm ${theme.mutedText}`}>
 					Already have an account?{' '}
 					<Link to="/signin" className="text-teal-700 hover:underline">
@@ -184,5 +191,6 @@ export function SignUp() {
 				</button>
 			</form>
 		</AuthLayout>
+		</>
 	)
 }

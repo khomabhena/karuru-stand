@@ -10,6 +10,7 @@ import { getSales, deleteSale } from '../../lib/api/sales.js'
 import { getAgencies } from '../../lib/api/agencies.js'
 import { getCustomers } from '../../lib/api/customers.js'
 import { theme } from '../../theme/colors.teal.js'
+import { SEO } from '../../components/SEO.jsx'
 
 export default function SalesList() {
 	const navigate = useNavigate()
@@ -208,8 +209,14 @@ export default function SalesList() {
 	}))
 
 	return (
-		<PageShell title="Sales">
-			<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+		<>
+			<SEO 
+				title="Sales"
+				description="View and manage all sales transactions. Track contracts, customers, stands, and payment statuses with advanced filtering options."
+				url="https://karuru-stand.vercel.app/sales"
+			/>
+			<PageShell title="Sales">
+				<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<p className="text-sm text-gray-600">
 						Manage sales transactions and contracts
@@ -349,6 +356,7 @@ export default function SalesList() {
 				/>
 			)}
 		</PageShell>
+		</>
 	)
 }
 

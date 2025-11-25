@@ -8,6 +8,7 @@ import { FloatingActionButton } from '../../components/ui/FloatingActionButton.j
 import { useRole } from '../../hooks/useRole.js'
 import { getStands, deleteStand } from '../../lib/api/stands.js'
 import { theme } from '../../theme/colors.teal.js'
+import { SEO } from '../../components/SEO.jsx'
 
 export default function StandsList() {
 	const navigate = useNavigate()
@@ -117,8 +118,14 @@ export default function StandsList() {
 	}))
 
 	return (
-		<PageShell title="Stands">
-			<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+		<>
+			<SEO 
+				title="Stands"
+				description="Manage your stand inventory. View available, sold, and reserved stands with detailed information about area, location, and pricing."
+				url="https://karuru-stand.vercel.app/stands"
+			/>
+			<PageShell title="Stands">
+				<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<p className="text-sm text-gray-600">
 						Manage stand inventory and availability
@@ -175,6 +182,7 @@ export default function StandsList() {
 				/>
 			)}
 		</PageShell>
+		</>
 	)
 }
 

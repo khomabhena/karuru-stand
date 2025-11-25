@@ -7,6 +7,7 @@ import { FloatingActionButton } from '../../components/ui/FloatingActionButton.j
 import { useRole } from '../../hooks/useRole.js'
 import { getCustomers, deleteCustomer } from '../../lib/api/customers.js'
 import { theme } from '../../theme/colors.teal.js'
+import { SEO } from '../../components/SEO.jsx'
 
 export default function CustomersList() {
 	const navigate = useNavigate()
@@ -98,8 +99,14 @@ export default function CustomersList() {
 	}))
 
 	return (
-		<PageShell title="Customers">
-			<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+		<>
+			<SEO 
+				title="Customers"
+				description="Manage customer information and view purchase history. Track customer details, contact information, and their stand purchases."
+				url="https://karuru-stand.vercel.app/customers"
+			/>
+			<PageShell title="Customers">
+				<div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 				<div>
 					<p className="text-sm text-gray-600">
 						Manage customer information and purchase history
@@ -142,6 +149,7 @@ export default function CustomersList() {
 				/>
 			)}
 		</PageShell>
+		</>
 	)
 }
 
