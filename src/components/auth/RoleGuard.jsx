@@ -1,6 +1,7 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../../auth/AuthContext'
 import { useRole } from '../../hooks/useRole'
+import { AccessDenied } from '../../pages/errors/AccessDenied.jsx'
 
 /**
  * RoleGuard component - restricts access based on user role
@@ -38,18 +39,8 @@ export function RoleGuard({ children, allowedRoles, fallback }) {
 			return fallback
 		}
 
-		// Default 403 page
-		return (
-			<div className="flex min-h-screen items-center justify-center bg-gray-50">
-				<div className="text-center">
-					<h1 className="mb-2 text-4xl font-bold text-gray-900">403</h1>
-					<p className="mb-4 text-gray-600">Access Denied</p>
-					<p className="text-sm text-gray-500">
-						You don't have permission to access this page.
-					</p>
-				</div>
-			</div>
-		)
+		// Use the dedicated AccessDenied page component
+		return <AccessDenied />
 	}
 
 	return children

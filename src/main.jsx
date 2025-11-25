@@ -31,6 +31,7 @@ import ReportsPage from './pages/reports/Index.jsx'
 import SalesReport from './pages/reports/SalesReport.jsx'
 import PaymentReport from './pages/reports/PaymentReport.jsx'
 import SettingsPage from './pages/settings/Index.jsx'
+import { AccessDenied } from './pages/errors/AccessDenied.jsx'
 
 const router = createBrowserRouter([
 	// Public routes
@@ -39,6 +40,7 @@ const router = createBrowserRouter([
 	{ path: '/signup', element: <SignUp /> },
 	{ path: '/forgot-password', element: <ForgotPassword /> },
 	{ path: '/auth/confirm', element: <ConfirmEmail /> },
+	{ path: '/403', element: <AccessDenied /> },
 
 	// Protected routes - require authentication
 	{

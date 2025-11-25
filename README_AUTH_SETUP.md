@@ -78,6 +78,7 @@ supabase db push
    **Email Templates:**
    - Customize email templates if needed
    - Update redirect URLs in password reset email template
+   - **See `EMAIL_TEMPLATES_GUIDE.md` for detailed instructions and example templates**
 
    **URL Configuration:**
    - **Site URL**: 
