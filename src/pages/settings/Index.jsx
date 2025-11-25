@@ -10,11 +10,10 @@ export default function Settings() {
 	const { user, profile, signOut } = useAuth()
 
 	const handleLogout = async () => {
-		const { error } = await signOut()
-		if (!error) {
-			// Use replace to prevent going back to dashboard
-			navigate('/signin', { replace: true })
-		}
+		// signOut handles errors gracefully (including missing session)
+		await signOut()
+		// Always navigate after signOut (even if there was an error, local state is cleared)
+		navigate('/signin', { replace: true })
 	}
 
 	return (

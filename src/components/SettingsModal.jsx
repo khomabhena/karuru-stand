@@ -10,11 +10,10 @@ export function SettingsModal({ isOpen, onClose, buttonRef }) {
 
 	const handleLogout = async () => {
 		onClose()
-		const { error } = await signOut()
-		if (!error) {
-			// Use replace to prevent going back to dashboard
-			navigate('/signin', { replace: true })
-		}
+		// signOut handles errors gracefully (including missing session)
+		await signOut()
+		// Always navigate after signOut (even if there was an error, local state is cleared)
+		navigate('/signin', { replace: true })
 	}
 
 	// Close on outside click
