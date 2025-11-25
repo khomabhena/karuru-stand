@@ -9,9 +9,12 @@ export function SettingsModal({ isOpen, onClose, buttonRef }) {
 	const dropdownRef = useRef(null)
 
 	const handleLogout = async () => {
-		await signOut()
 		onClose()
-		navigate('/signin')
+		const { error } = await signOut()
+		if (!error) {
+			// Use replace to prevent going back to dashboard
+			navigate('/signin', { replace: true })
+		}
 	}
 
 	// Close on outside click
