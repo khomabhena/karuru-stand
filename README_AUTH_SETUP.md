@@ -29,18 +29,29 @@ This guide will help you set up Supabase authentication for the Karuru Stand Man
 
 ### 3. Configure Environment Variables
 
-1. Create a `.env` file in the root of your project (copy from `.env.example`):
+1. Create a `.env` file in the root of your project:
    ```bash
-   cp .env.example .env
+   # Create .env file
+   touch .env
    ```
 
-2. Add your Supabase credentials to `.env`:
+2. Add your Supabase credentials and app URL to `.env`:
    ```env
    VITE_SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
    VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+   
+   # App URL (used for email redirects)
+   # For development: http://localhost:5173
+   # For production: https://karuru-stand.vercel.app
+   VITE_APP_URL=http://localhost:5173
    ```
 
-3. **Important**: Never commit `.env` to git (it's already in `.gitignore`)
+3. **For Production (Vercel)**: 
+   - Go to your Vercel project settings → Environment Variables
+   - Add `VITE_APP_URL` with value: `https://karuru-stand.vercel.app`
+   - This ensures email confirmation links point to your production URL
+
+4. **Important**: Never commit `.env` to git (it's already in `.gitignore`)
 
 ### 4. Run Database Migrations
 
@@ -69,8 +80,16 @@ supabase db push
    - Update redirect URLs in password reset email template
 
    **URL Configuration:**
-   - Site URL: `http://localhost:5173` (for development)
-   - Redirect URLs: Add your production URL when deploying
+   - **Site URL**: 
+     - For development: `http://localhost:5173`
+     - For production: `https://karuru-stand.vercel.app` (or your production URL)
+   - **Redirect URLs** (Add all URLs where users might be redirected after email confirmation):
+     - `http://localhost:5173/auth/confirm` (for local development)
+     - `https://karuru-stand.vercel.app/auth/confirm` (for production)
+     - `http://localhost:5173/reset-password` (for password reset in development)
+     - `https://karuru-stand.vercel.app/reset-password` (for password reset in production)
+   
+   **Important**: The redirect URLs must match exactly what you configure. Supabase will reject redirects to URLs not in this whitelist.
 
 ### 6. Create Your First Admin User
 
@@ -196,10 +215,18 @@ Policies are defined in `supabase/migrations/002_rls_policies.sql`.
 - Verify RLS policies are applied
 - Check that user has correct `agency_id` if they're not admin
 
-### Email confirmation not working
-- Check Supabase email settings
-- For development, disable email confirmation in Auth settings
-- Check spam folder for confirmation emails
+### Email confirmation not working / "This site can't be reached"
+- **Check Supabase Redirect URLs**: Go to Authentication → URL Configuration
+  - Make sure your production URL (`https://karuru-stand.vercel.app/auth/confirm`) is in the Redirect URLs list
+  - The URL must match exactly (including https:// and the /auth/confirm path)
+- **Check Environment Variables**: 
+  - Make sure `VITE_APP_URL` is set correctly in your Vercel environment variables
+  - For production, it should be: `https://karuru-stand.vercel.app`
+- **Check Site URL**: In Supabase Auth settings, set Site URL to your production URL
+- **For development**: 
+  - You can disable email confirmation in Auth settings to allow immediate sign-in
+  - Or add `http://localhost:5173/auth/confirm` to Redirect URLs
+- **Check spam folder** for confirmation emails
 
 ## 📚 Next Steps
 

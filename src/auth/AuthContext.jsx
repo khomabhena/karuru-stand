@@ -143,8 +143,10 @@ export function AuthProvider({ children }) {
 	// Sign up with email and password
 	const signUp = async (email, password, fullName) => {
 		try {
-			// Get the current origin for email redirect
-			const redirectTo = `${window.location.origin}/auth/confirm`
+			// Get the redirect URL from environment variable or use current origin
+			// In production, this should be set to your deployed URL
+			const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
+			const redirectTo = `${baseUrl}/auth/confirm`
 			
 			const { data, error } = await supabase.auth.signUp({
 				email,
@@ -173,11 +175,15 @@ export function AuthProvider({ children }) {
 	// Resend email confirmation
 	const resendConfirmation = async (email) => {
 		try {
+			// Get the redirect URL from environment variable or use current origin
+			const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
+			const redirectTo = `${baseUrl}/auth/confirm`
+			
 			const { error } = await supabase.auth.resend({
 				type: 'signup',
 				email: email,
 				options: {
-					emailRedirectTo: `${window.location.origin}/auth/confirm`,
+					emailRedirectTo: redirectTo,
 				},
 			})
 
@@ -206,8 +212,12 @@ export function AuthProvider({ children }) {
 	// Reset password
 	const resetPassword = async (email) => {
 		try {
+			// Get the redirect URL from environment variable or use current origin
+			const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
+			const redirectTo = `${baseUrl}/reset-password`
+			
 			const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-				redirectTo: `${window.location.origin}/reset-password`,
+				redirectTo: redirectTo,
 			})
 
 			if (error) throw error
