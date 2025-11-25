@@ -206,12 +206,12 @@ export default function EditPayment() {
 						disabled={loading}
 					/>
 					<Input
-						label="Reference Number (Optional)"
+						label="Reference Number"
 						name="reference_number"
-						value={formData.reference_number}
-						onChange={handleChange}
-						placeholder="Transaction/Receipt number"
+						value={formData.reference_number || 'N/A'}
+						readOnly
 						disabled={loading}
+						placeholder="Auto-generated"
 					/>
 					<div className="sm:col-span-2">
 						<label className="block text-sm font-medium text-gray-700 mb-1">

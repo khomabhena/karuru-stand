@@ -4,7 +4,7 @@ import { Card } from '../../components/ui/Card.jsx'
 import { Input } from '../../components/ui/Input.jsx'
 import { Select } from '../../components/ui/Select.jsx'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { createPayment } from '../../lib/api/payments.js'
+import { createPayment, generateTransactionNumber } from '../../lib/api/payments.js'
 import { getSalesWithBalance } from '../../lib/api/payments.js'
 import { useAuth } from '../../auth/AuthContext.jsx'
 import { theme } from '../../theme/colors.teal.js'
@@ -32,6 +32,17 @@ export default function NewPayment() {
 
 	useEffect(() => {
 		loadSales()
+	}, [])
+
+	useEffect(() => {
+		// Auto-generate reference number
+		if (!formData.reference_number) {
+			generateTransactionNumber().then(num => {
+				setFormData(prev => ({ ...prev, reference_number: num }))
+			}).catch(err => {
+				console.error('Error generating transaction number:', err)
+			})
+		}
 	}, [])
 
 	useEffect(() => {
@@ -185,12 +196,12 @@ export default function NewPayment() {
 						disabled={loading}
 					/>
 					<Input
-						label="Reference Number (Optional)"
+						label="Reference Number"
 						name="reference_number"
-						value={formData.reference_number}
-						onChange={handleChange}
-						placeholder="Leave empty to auto-generate (Trx-xxx-xxxxx-xxxx)"
+						value={formData.reference_number || ''}
+						readOnly
 						disabled={loading}
+						placeholder="Auto-generated"
 					/>
 					<div className="sm:col-span-2">
 						<label className="block text-sm font-medium text-gray-700 mb-1">

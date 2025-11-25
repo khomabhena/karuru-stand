@@ -206,7 +206,7 @@ export default function NewSale() {
 						label="Contract Number"
 						name="contract_number"
 						value={formData.contract_number}
-						onChange={handleChange}
+						readOnly
 						disabled={loading}
 						placeholder="Auto-generated"
 					/>

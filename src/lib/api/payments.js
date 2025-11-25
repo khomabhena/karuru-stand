@@ -109,48 +109,81 @@ export async function getPaymentsBySale(saleId) {
 
 /**
  * Generate a unique transaction number
- * Format: Trx-YYY-NNNNN-NNNN
+ * Format: TRX-YYY-MMNNN-DDNN (e.g., TRX-025-01001-1501)
  * - YYY = Last 3 digits of year (e.g., 025 for 2025)
- * - NNNNN = 5-digit sequential number for payments this year
- * - NNNN = 4-digit sequential number (payment count)
+ * - MM = Month (2 digits, e.g., 01 for January)
+ * - NNN = Sequential number within the month (3 digits, e.g., 001)
+ * - DD = Day (2 digits, e.g., 15)
+ * - NN = Sequential number within the day (2 digits, e.g., 01)
  */
 export async function generateTransactionNumber() {
-	const year = new Date().getFullYear()
+	const now = new Date()
+	const year = now.getFullYear()
 	const yearCode = String(year).slice(-3).padStart(3, '0')
-	const prefix = `Trx-${yearCode}-`
+	const month = String(now.getMonth() + 1).padStart(2, '0')
+	const day = String(now.getDate()).padStart(2, '0')
+	
+	const prefix = `TRX-${yearCode}-${month}`
 
-	// Get the highest transaction number for this year
+	// Get all payments for the current month
 	const { data, error } = await supabase
 		.from('payments')
-		.select('reference_number')
+		.select('reference_number, created_at')
 		.like('reference_number', `${prefix}%`)
 		.order('created_at', { ascending: false })
-		.limit(100)
 
 	if (error) throw error
 
+	// Find the highest sequential number for the month
+	let maxMonthSeq = 0
+	const today = new Date()
+	today.setHours(0, 0, 0, 0)
+	
 	if (data && data.length > 0) {
-		// Find the highest sequential number
-		let maxSeq = 0
 		data.forEach(payment => {
 			if (payment.reference_number && payment.reference_number.startsWith(prefix)) {
+				// Extract month sequence: MMNNN format
 				const parts = payment.reference_number.split('-')
 				if (parts.length >= 3) {
-					const seqPart = parts[2] || '00000'
-					const seq = parseInt(seqPart) || 0
-					if (seq > maxSeq) maxSeq = seq
+					const monthSeqPart = parts[2] || ''
+					if (monthSeqPart.length >= 5) {
+						// Extract NNN part (last 3 digits)
+						const monthSeq = parseInt(monthSeqPart.slice(2)) || 0
+						if (monthSeq > maxMonthSeq) maxMonthSeq = monthSeq
+					}
 				}
 			}
 		})
-
-		const nextSeq = maxSeq + 1
-		const seq5 = String(nextSeq).padStart(5, '0')
-		const seq4 = String(nextSeq).padStart(4, '0')
-		return `${prefix}${seq5}-${seq4}`
 	}
 
-	// First payment of the year
-	return `${prefix}00001-0001`
+	// Get payments for today to find day sequence
+	let maxDaySeq = 0
+	if (data && data.length > 0) {
+		data.forEach(payment => {
+			const paymentDate = new Date(payment.created_at)
+			paymentDate.setHours(0, 0, 0, 0)
+			
+			// Check if it's from today and matches the format
+			if (paymentDate.getTime() === today.getTime() && payment.reference_number && payment.reference_number.startsWith(prefix)) {
+				const parts = payment.reference_number.split('-')
+				if (parts.length >= 4) {
+					const daySeqPart = parts[3] || ''
+					if (daySeqPart.length >= 4) {
+						// Extract NN part (last 2 digits)
+						const daySeq = parseInt(daySeqPart.slice(2)) || 0
+						if (daySeq > maxDaySeq) maxDaySeq = daySeq
+					}
+				}
+			}
+		})
+	}
+
+	const nextMonthSeq = maxMonthSeq + 1
+	const nextDaySeq = maxDaySeq + 1
+	const monthSeq = String(nextMonthSeq).padStart(3, '0')
+	const daySeq = String(nextDaySeq).padStart(2, '0')
+	
+	return `TRX-${yearCode}-${month}${monthSeq}-${day}${daySeq}`
 }
 
 /**

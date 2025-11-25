@@ -131,30 +131,81 @@ export async function getSalesByCustomer(customerId) {
 
 /**
  * Generate a unique contract number
- * Format: KAR-YYYY-NNNN (e.g., KAR-2025-0001)
+ * Format: CTR-YYY-MMNNN-DDNN (e.g., CTR-025-01001-1501)
+ * - YYY = Last 3 digits of year (e.g., 025 for 2025)
+ * - MM = Month (2 digits, e.g., 01 for January)
+ * - NNN = Sequential number within the month (3 digits, e.g., 001)
+ * - DD = Day (2 digits, e.g., 15)
+ * - NN = Sequential number within the day (2 digits, e.g., 01)
  */
 export async function generateContractNumber() {
-	const year = new Date().getFullYear()
-	const prefix = `KAR-${year}-`
+	const now = new Date()
+	const year = now.getFullYear()
+	const yearCode = String(year).slice(-3).padStart(3, '0')
+	const month = String(now.getMonth() + 1).padStart(2, '0')
+	const day = String(now.getDate()).padStart(2, '0')
+	
+	const prefix = `CTR-${yearCode}-${month}`
+	const dayPrefix = `${prefix}XXX-${day}`
 
-	// Get the highest contract number for this year
+	// Get all contracts for the current month
 	const { data, error } = await supabase
 		.from('sales')
-		.select('contract_number')
+		.select('contract_number, created_at')
 		.like('contract_number', `${prefix}%`)
-		.order('contract_number', { ascending: false })
-		.limit(1)
+		.order('created_at', { ascending: false })
 
 	if (error) throw error
 
-	if (data && data.length > 0 && data[0].contract_number) {
-		// Extract the number part and increment
-		const lastNumber = parseInt(data[0].contract_number.split('-')[2]) || 0
-		const nextNumber = String(lastNumber + 1).padStart(4, '0')
-		return `${prefix}${nextNumber}`
+	// Find the highest sequential number for the month
+	let maxMonthSeq = 0
+	const today = new Date()
+	today.setHours(0, 0, 0, 0)
+	
+	if (data && data.length > 0) {
+		data.forEach(sale => {
+			if (sale.contract_number && sale.contract_number.startsWith(prefix)) {
+				// Extract month sequence: MMNNN format
+				const parts = sale.contract_number.split('-')
+				if (parts.length >= 3) {
+					const monthSeqPart = parts[2] || ''
+					if (monthSeqPart.length >= 5) {
+						// Extract NNN part (last 3 digits)
+						const monthSeq = parseInt(monthSeqPart.slice(2)) || 0
+						if (monthSeq > maxMonthSeq) maxMonthSeq = monthSeq
+					}
+				}
+			}
+		})
 	}
 
-	// First contract of the year
-	return `${prefix}0001`
+	// Get contracts for today to find day sequence
+	let maxDaySeq = 0
+	if (data && data.length > 0) {
+		data.forEach(sale => {
+			const saleDate = new Date(sale.created_at)
+			saleDate.setHours(0, 0, 0, 0)
+			
+			// Check if it's from today and matches the format
+			if (saleDate.getTime() === today.getTime() && sale.contract_number && sale.contract_number.startsWith(prefix)) {
+				const parts = sale.contract_number.split('-')
+				if (parts.length >= 4) {
+					const daySeqPart = parts[3] || ''
+					if (daySeqPart.length >= 4) {
+						// Extract NN part (last 2 digits)
+						const daySeq = parseInt(daySeqPart.slice(2)) || 0
+						if (daySeq > maxDaySeq) maxDaySeq = daySeq
+					}
+				}
+			}
+		})
+	}
+
+	const nextMonthSeq = maxMonthSeq + 1
+	const nextDaySeq = maxDaySeq + 1
+	const monthSeq = String(nextMonthSeq).padStart(3, '0')
+	const daySeq = String(nextDaySeq).padStart(2, '0')
+	
+	return `CTR-${yearCode}-${month}${monthSeq}-${day}${daySeq}`
 }
 
