@@ -54,8 +54,9 @@ export function Header({ title, subtitle, pageTitle }) {
 								</button>
 								<button
 									onClick={() => navigate('/app')}
-									className="text-lg font-semibold tracking-tight transition-opacity active:opacity-80 hover:opacity-90"
+									className="flex items-center gap-2 text-lg font-semibold tracking-tight transition-opacity active:opacity-80 hover:opacity-90"
 								>
+									<img src="/favicon-white.svg" alt="" className="h-5 w-5" />
 									{pageTitle}
 								</button>
 							</div>
@@ -64,8 +65,9 @@ export function Header({ title, subtitle, pageTitle }) {
 							{title ? (
 								<button
 									onClick={() => navigate('/app')}
-									className="text-left text-lg font-semibold tracking-tight transition-opacity active:opacity-80 sm:text-xl hover:opacity-90"
+									className="flex items-center gap-2 text-left text-lg font-semibold tracking-tight transition-opacity active:opacity-80 sm:text-xl hover:opacity-90"
 								>
+									<img src="/favicon-white.svg" alt="" className="h-6 w-6 sm:h-7 sm:w-7" />
 									{title}
 								</button>
 							) : null}
