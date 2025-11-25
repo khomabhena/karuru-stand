@@ -4,13 +4,14 @@ import { OverviewActions } from './components/OverviewActions.jsx'
 import { StatsGrid } from './components/StatsGrid.jsx'
 import { RecentActivity } from './components/RecentActivity.jsx'
 import { QuickLinks } from './components/QuickLinks.jsx'
+import { BottomNav } from './components/BottomNav.jsx'
 import { theme } from './theme/colors.teal.js'
 
 export default function App() {
 	return (
 		<div className={`min-h-screen ${theme.appBg} ${theme.text}`}>
 			<Header title="Karuru" subtitle="Stand management made simple" />
-			<main className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-5 md:px-6 md:py-8">
+			<main className="mx-auto w-full max-w-7xl px-4 pb-20 pt-6 sm:px-5 sm:pb-6 md:px-6 md:py-8">
 				<OverviewActions />
 
 				<StatsGrid />
@@ -20,6 +21,7 @@ export default function App() {
 					<QuickLinks />
 				</section>
 			</main>
+			<BottomNav />
 		</div>
 	)
 }

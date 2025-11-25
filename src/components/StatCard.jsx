@@ -46,12 +46,12 @@ export function StatCard({ label, value, helper, accent }) {
 			: 'text-teal-700'
 	const shadowClass = 'shadow-lg shadow-[0_8px_24px_rgba(13,148,136,0.25)]'
 	return (
-		<div className={`rounded-xl border ${shadowClass} p-4 ${theme.border} ${tint} border-l-4 ${borderAccent}`}>
+		<div className={`rounded-xl border ${shadowClass} p-3 sm:p-4 ${theme.border} ${tint} border-l-4 ${borderAccent}`}>
 			<div className="flex items-center justify-between">
-				<p className={`text-xs font-medium uppercase tracking-wide ${theme.mutedText}`}>{label}</p>
+				<p className={`text-xs sm:text-xs font-medium uppercase tracking-wide ${theme.mutedText}`}>{label}</p>
 				<div className={`h-2 w-2 rounded-full ${dot.split(' ')[0]}`} />
 			</div>
-			<div className={`mt-2 text-2xl font-semibold tracking-tight ${valueColor}`}>{value}</div>
+			<div className={`mt-2 text-xl sm:text-2xl font-semibold tracking-tight ${valueColor}`}>{value}</div>
 			{helper ? <div className={`mt-1 text-xs ${theme.mutedText}`}>{helper}</div> : null}
 		</div>
 	)
